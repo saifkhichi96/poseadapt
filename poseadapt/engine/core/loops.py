@@ -89,6 +89,15 @@ class ContinualTrainingLoop(BaseLoop):
         Returns:
             EpochBasedContinualTrainLoop: Experience training loop.
         """
+        self.runner.logger.info(f"[ContinualTrainingLoop] Building training loop for {self.get_info(self.experience_id)['name']}")
+
+        num_batches = len(dataloader)
+        if num_batches == 0:
+            raise ValueError("The dataloader has no data.")
+        
+        self.runner.logger.info(
+            f"[ContinualTrainingLoop] Training for {max_epochs} epochs, {num_batches} iterations per epoch, validating every {val_interval} epochs."
+        )
         return EpochBasedContinualTrainLoop(
             runner=self.runner,
             dataloader=dataloader,

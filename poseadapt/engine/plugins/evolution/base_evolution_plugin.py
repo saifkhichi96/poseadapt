@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 # Copyright (c) 2025 Saif Khan. All rights reserved.
 
+import copy
+
 from mmpose.registry import HOOKS
 
 from poseadapt.third_party.avalanche import freeze_everything
@@ -32,8 +34,8 @@ class BaseEvolutionPlugin(BasePlugin):
 
     def _copy_model_state(self, runner):
         """Creates a frozen deep copy of the model's state_dict."""
-        prev_model = runner.module
-        state_dict = runner.module.state_dict()
+        prev_model = copy.deepcopy(runner.module)
+        state_dict = prev_model.state_dict()
         freeze_everything(prev_model)
         return prev_model, state_dict
 

@@ -11,7 +11,7 @@ from mmpose.registry import HOOKS
 from poseadapt.engine import BasePlugin
 from poseadapt.third_party.avalanche import ParamData, copy_params_dict
 
-from .utils import compute_importances
+from ..common import compute_importances
 
 
 @HOOKS.register_module()
