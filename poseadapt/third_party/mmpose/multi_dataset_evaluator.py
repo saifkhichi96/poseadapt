@@ -19,7 +19,7 @@ from mmpose.registry import DATASETS, EVALUATORS
 
 
 @EVALUATORS.register_module()
-class MultiDatasetEvaluator(Evaluator):
+class MultiDatasetEvaluatorV2(Evaluator):
     """Wrapper class to compose multiple BaseMetric instances for different datasets.
 
     This evaluator allows routing evaluation data to the correct metric

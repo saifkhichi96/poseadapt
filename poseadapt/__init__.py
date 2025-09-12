@@ -1,6 +1,5 @@
 from .engine import (
     BasePlugin,
-    BaseEvolutionPlugin,
     ContinualLearningRunner,
     DefaultEvolutionPlugin,
     load_evolution_state_dict,
@@ -12,7 +11,7 @@ from .strategies import (
 )
 from .third_party.mmpose import (
     MetricWrapper,
-    MultiDatasetEvaluator,
+    MultiDatasetEvaluatorV2,
     MultiDatasetWrapper,
 )
 
@@ -20,10 +19,9 @@ __all__ = [
     "ContinualLearningRunner",
     "ContinualTrainingLoop",
     "BasePlugin",
-    "BaseEvolutionPlugin",
     "DefaultEvolutionPlugin",
     "MetricWrapper",
-    "MultiDatasetEvaluator",
+    "MultiDatasetEvaluatorV2",
     "MultiDatasetWrapper",
     "EWCPlugin",
     "LFLPlugin",
