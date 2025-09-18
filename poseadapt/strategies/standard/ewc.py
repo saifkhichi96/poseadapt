@@ -60,7 +60,7 @@ class EWCPlugin(BasePlugin):
         self,
         alpha: float,
         mode: str = "separate",
-        decay_factor: Optional[float] = None,
+        decay_factor: Optional[float] = 0.95,
         keep_importance_data: bool = False,
     ):
         super().__init__()
@@ -94,7 +94,7 @@ class EWCPlugin(BasePlugin):
         super().before_backward(runner, experience_index, losses, data_batch)
 
         def compute_penalty(experiences):
-            penalty = torch.tensor(0.0).to(runner.device)
+            penalty = torch.zeros((), device=runner.device)
             for exp in experiences:
                 for k, cur_param in runner.module.named_parameters():
                     # new parameters do not count

@@ -2,7 +2,7 @@
 # Copyright (c) 2025 Saif Khan. All rights reserved.
 
 import warnings
-from typing import Dict
+from typing import Dict, Optional
 
 import torch
 import torch.nn.functional as F
@@ -52,13 +52,31 @@ def convert_predictions(preds_curr, c):
         return _convert(preds_curr)
 
 
-def distillation_loss(student_logits, teacher_logits, T=1.0):
-    # soft target loss (teacher softmax vs student softmax)
-    return F.kl_div(
-        F.log_softmax(student_logits / T, dim=1),
-        F.softmax(teacher_logits / T, dim=1),
-        reduction="batchmean",
-    ) * (T * T)
+def distillation_loss(
+    student_logits,
+    teacher_logits,
+    T=1.0,
+    tau: Optional[float] = None,
+) -> torch.Tensor:
+    # logits: [B, K, D]
+    _, _, D = student_logits.shape
+    s = (student_logits / T).reshape(-1, D)   # [B*K, D]
+    t = (teacher_logits / T).reshape(-1, D)
+
+    if tau is None:
+        return F.kl_div(F.log_softmax(s, dim=-1), F.softmax(t, dim=1),
+                        reduction="batchmean") * (T * T)
+
+    # per-distribution KL (no reduction)
+    kl = F.kl_div(F.log_softmax(s, dim=-1), F.softmax(t, dim=-1),
+                  reduction="none").sum(dim=-1)  # [B*K]
+
+    # teacher confidence per distribution = max prob
+    conf = F.softmax(t, dim=-1).max(dim=-1).values  # [B*K]
+    mask = (conf >= tau).float()
+
+    denom = mask.sum().clamp_min(1.0)
+    return (kl * mask).sum() / denom * (T * T)
 
 
 def compute_importances(

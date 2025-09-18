@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 # Copyright (c) 2025 Saif Khan. All rights reserved.
 
-from typing import Dict
+from typing import Dict, Optional
 
 import torch
 from mmpose.registry import HOOKS, TRANSFORMS
@@ -44,11 +44,13 @@ class LWFPlugin(BasePlugin):
         self,
         temperature: float = 2.0,
         alpha: float = 0.5,
+        conf_thr: Optional[float] = 0.3,
         converters: Dict[int, Dict] = None,
     ):
         super().__init__()
         self.temperature = temperature
         self.alpha = alpha
+        self.conf_thr = conf_thr
 
         # Initialize converters
         self.converters = dict()
@@ -67,18 +69,8 @@ class LWFPlugin(BasePlugin):
         prev_model = runner.last_model
         if experience_index > 0:
             assert prev_model is not None, (
-                "The previous model is required for LwF. Please include a "
-                "BaseEvolutionPlugin in your config to save the previous model."
+                "LwF needs a previous snapshot. Include a *EvolutionPlugin."
             )
-
-            # Set to training mode
-            prev_model.train()
-
-    def after_experience(self, runner, experience_index: int):
-        super().after_experience(runner, experience_index)
-        prev_model = runner.last_model
-        if prev_model is not None:
-            prev_model.eval()  # Restore to eval mode
 
     def before_backward(self, runner, experience_index, losses, data_batch=None):
         """
@@ -111,7 +103,12 @@ class LWFPlugin(BasePlugin):
         # Compute LwF penalty
         penalty = torch.tensor(0.0, device=runner.device)
         for p_curr, p_last in zip(preds_curr, preds_last):
-            penalty += distillation_loss(p_curr, p_last, self.temperature)
+            penalty += distillation_loss(
+                p_curr,
+                p_last,
+                self.temperature,
+                tau=self.conf_thr,
+            )
         penalty /= len(preds_curr)
 
         # Add penalty to losses dictionary

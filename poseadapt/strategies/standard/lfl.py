@@ -33,12 +33,17 @@ class LFLPlugin(BasePlugin):
           https://arxiv.org/abs/1607.00122
     """
 
-    def __init__(self, alpha):
+    def __init__(self, alpha = 0.5):
         super().__init__()
         self.alpha = alpha
 
     def before_experience(self, runner, experience_index: int):
         super().before_experience(runner, experience_index)
+        prev_model = runner.last_model
+        if experience_index > 0:
+            assert prev_model is not None, (
+                "LFL needs a previous snapshot. Include a *EvolutionPlugin."
+            )
 
     def before_backward(self, runner, experience_index, losses, data_batch=None):
         """
@@ -55,19 +60,12 @@ class LFLPlugin(BasePlugin):
         if prev_model is None:
             return
 
-        # Put models in eval mode
-        current_model.eval()
-        prev_model.eval()
-
         # Extract features
         feats_curr = current_model.extract_feat(data_batch["inputs"])
         with torch.no_grad():
             feats_prev = prev_model.extract_feat(data_batch["inputs"])
 
-        # Reset current model to train mode
-        current_model.train()
-
-        # Compute LfL penalty (euclidean distance between features)
+        # Compute LFL penalty (euclidean distance between features)
         penalty = 0.0
         for f_curr, f_prev in zip(feats_curr, feats_prev):
             penalty += F.mse_loss(f_curr, f_prev)
