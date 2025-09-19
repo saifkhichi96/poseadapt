@@ -1,7 +1,7 @@
 _base_ = [
     "mmpose::_base_/default_runtime.py",
     "../../_base_/models/rtmpose/rtmpose-t.py",
-    "./poseadapt-lighting-lle.py",
+    "./poseadapt-lighting-llv.py",
 ]
 
 
