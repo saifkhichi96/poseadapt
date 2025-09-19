@@ -1,5 +1,14 @@
 BASE_DIR="benchmark/protocols/domain_incremental/"
 
+# Preload COCO validation set into memory
+export PRELOAD_COCO=1
+export COCO_SPLIT="val"
+
+# Preload PoseAdapt benchmark datasets into memory
+export PRELOAD_POSEADAPT=1
+export POSEADAPT_SPLIT="lighting"
+
+# Run all lighting experiments in parallel (small models, 10 epochs each)
 MEMORY=128G TIME=04:00:00 PARTITION="RTXA6000,RTXA6000-AV,A100-80GB,H100,H200,H200-AV,L40S,L40S-AV" CPUS=128 mmtrain \
     $BASE_DIR/lighting-ll/rtmpose-t_8xb32-10e_poseadapt-lighting-ll_256x192.py \
     $BASE_DIR/lighting-ll/rtmpose-t_8xb32-10e_poseadapt-lighting-ll_ewc_256x192.py \
