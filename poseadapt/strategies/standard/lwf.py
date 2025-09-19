@@ -44,7 +44,7 @@ class LWFPlugin(BasePlugin):
         self,
         temperature: float = 2.0,
         alpha: float = 0.5,
-        conf_thr: Optional[float] = 0.3,
+        conf_thr: Optional[float] = None,
         converters: Dict[int, Dict] = None,
     ):
         super().__init__()
@@ -99,6 +99,8 @@ class LWFPlugin(BasePlugin):
             if isinstance(self.alpha, (list, tuple))
             else self.alpha
         )
+        if alpha == 0.0:
+            return
 
         # Compute LwF penalty
         penalty = torch.tensor(0.0, device=runner.device)
@@ -110,6 +112,10 @@ class LWFPlugin(BasePlugin):
                 tau=self.conf_thr,
             )
         penalty /= len(preds_curr)
+        
+        # Log an error if penalty is zero or invalid
+        if penalty <= 0 or not torch.isfinite(penalty):
+            runner.logger.error("LwF penalty is zero or invalid.")
 
         # Add penalty to losses dictionary
         losses["loss_lwf"] = alpha * penalty
