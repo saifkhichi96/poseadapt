@@ -47,9 +47,9 @@ class RWalkPlugin(BasePlugin):
         # Checkpointed accumulators for a Δt window
         self.checkpoint_params: Dict[str, ParamData] = dict()  # θ at last checkpoint
         self.checkpoint_loss: Dict[str, ParamData] = dict()  # ΔL accumulators
-        self.checkpoint_scores: Dict[
-            str, ParamData
-        ] = dict()  # s_{t1}^{t2} accumulators
+        self.checkpoint_scores: Dict[str, ParamData] = (
+            dict()
+        )  # s_{t1}^{t2} accumulators
 
         # Per-iteration storage
         self.iter_params: Dict[str, ParamData] = dict()  # θ_t snapshot

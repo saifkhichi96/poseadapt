@@ -99,7 +99,7 @@ class ContinualLearningRunner(Runner):
             Runner: A runner built from the config.
         """
         cfg = copy.deepcopy(cfg)
-        runner = cls(
+        return cls(
             model=cfg["model"],
             work_dir=cfg["work_dir"],
             train_dataloaders=cfg.get("train_dataloaders"),
@@ -129,8 +129,6 @@ class ContinualLearningRunner(Runner):
             cfg=cfg,
         )
 
-        return runner
-
     @property
     def last_model(self):
         """The last model in memory, if available.
@@ -152,8 +150,7 @@ class ContinualLearningRunner(Runner):
         """
         if is_model_wrapper(self.model):
             return self.model.module
-        else:
-            return self.model
+        return self.model
 
     @property
     def device(self):
@@ -164,8 +161,8 @@ class ContinualLearningRunner(Runner):
         """
         if is_model_wrapper(self.model):
             return self.model.device
-        else:
-            get_device()
+
+        return get_device()
 
     def get_experience_data(self, index: int) -> Dict:
         """Get dataloaders and evaluators for a given experience index.
@@ -223,10 +220,7 @@ class ContinualLearningRunner(Runner):
         Returns:
             nn.Module: The trained model.
         """
-        if is_model_wrapper(self.model):
-            ori_model = self.model.module
-        else:
-            ori_model = self.model
+        ori_model = self.model.module if is_model_wrapper(self.model) else self.model
         assert hasattr(ori_model, "train_step"), (
             "If you want to train your model, please make sure your model "
             "has implemented `train_step`."

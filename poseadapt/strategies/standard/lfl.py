@@ -33,7 +33,7 @@ class LFLPlugin(BasePlugin):
           https://arxiv.org/abs/1607.00122
     """
 
-    def __init__(self, alpha = 0.5):
+    def __init__(self, alpha=0.5):
         super().__init__()
         self.alpha = alpha
 

@@ -89,12 +89,14 @@ class ContinualTrainingLoop(BaseLoop):
         Returns:
             EpochBasedContinualTrainLoop: Experience training loop.
         """
-        self.runner.logger.info(f"[ContinualTrainingLoop] Building training loop for {self.get_info(self.experience_id)['name']}")
+        self.runner.logger.info(
+            f"[ContinualTrainingLoop] Building training loop for {self.get_info(self.experience_id)['name']}"
+        )
 
         num_batches = len(dataloader)
         if num_batches == 0:
             raise ValueError("The dataloader has no data.")
-        
+
         self.runner.logger.info(
             f"[ContinualTrainingLoop] Training for {max_epochs} epochs, {num_batches} iterations per epoch, validating every {val_interval} epochs."
         )
@@ -187,7 +189,9 @@ class ContinualTrainingLoop(BaseLoop):
 
         # Initiate inner count of `optim_wrapper`.
         self.runner.optim_wrapper.initialize_count_status(
-            self.runner.model, train_loop.iter, train_loop.max_iters  # type: ignore
+            self.runner.model,
+            train_loop.iter,
+            train_loop.max_iters,  # type: ignore
         )  # type: ignore
 
         # Maybe compile the model according to options in self.cfg.compile

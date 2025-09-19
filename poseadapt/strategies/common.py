@@ -24,8 +24,7 @@ def extract_logits(model, features):
 def get_predictions(model, data_batch):
     """Get predictions from the model."""
     features = extract_features(model, data_batch)
-    logits = extract_logits(model, features)
-    return logits
+    return extract_logits(model, features)
 
 
 def get_features_and_logits(model, data_batch):
@@ -48,8 +47,7 @@ def convert_predictions(preds_curr, c):
 
     if isinstance(preds_curr, (tuple, list)):
         return [_convert(p) for p in preds_curr]
-    else:
-        return _convert(preds_curr)
+    return _convert(preds_curr)
 
 
 def distillation_loss(
@@ -60,16 +58,20 @@ def distillation_loss(
 ) -> torch.Tensor:
     # logits: [B, K, D]
     _, _, D = student_logits.shape
-    s = (student_logits / T).reshape(-1, D)   # [B*K, D]
+    s = (student_logits / T).reshape(-1, D)  # [B*K, D]
     t = (teacher_logits / T).reshape(-1, D)
 
     if tau is None:
-        return F.kl_div(F.log_softmax(s, dim=-1), F.softmax(t, dim=1),
-                        reduction="batchmean") * (T * T)
+        return F.kl_div(
+            F.log_softmax(s, dim=-1), F.softmax(t, dim=1), reduction="batchmean"
+        ) * (T * T)
 
     # per-distribution KL (no reduction)
-    kl = F.kl_div(F.log_softmax(s, dim=-1), F.softmax(t, dim=-1),
-                  reduction="none").sum(dim=-1)  # [B*K]
+    kl = F.kl_div(
+        F.log_softmax(s, dim=-1),
+        F.softmax(t, dim=-1),
+        reduction="none",
+    ).sum(dim=-1)  # [B*K]
 
     # teacher confidence per distribution = max prob
     conf = F.softmax(t, dim=-1).max(dim=-1).values  # [B*K]

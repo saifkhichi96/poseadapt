@@ -2,6 +2,7 @@
 # Copyright (c) 2025 Saif Khan. All rights reserved.
 
 from typing import Any, Dict
+
 import torch
 import torch.nn as nn
 from mmpose.registry import HOOKS
@@ -38,17 +39,30 @@ def load_state_dict(
         copy_slice: "front" (default) or "center" (future option).
     """
     own_state = model.state_dict()
-    device = next(model.parameters()).device if any(p.requires_grad for p in model.parameters()) else torch.device("cpu")
+    device = (
+        next(model.parameters()).device
+        if any(p.requires_grad for p in model.parameters())
+        else torch.device("cpu")
+    )
 
     def _make_filled_like(dst: torch.Tensor, src: torch.Tensor) -> torch.Tensor:
         if fill_mode == "zeros":
             out = torch.zeros_like(dst, device=device)
         elif fill_mode == "mean":
-            m = (src.mean().item() if src.numel() > 0 else 0.0)
+            m = src.mean().item() if src.numel() > 0 else 0.0
             out = torch.full_like(dst, fill_value=m, device=device)
         elif fill_mode == "std":
-            mean, std = (src.mean().item(), src.std().item()) if src.numel() > 1 else (0.0, 1.0)
-            out = torch.normal(mean=mean, std=std, size=dst.shape, dtype=dst.dtype, device=device)
+            mean, std = (
+                (
+                    src.mean().item(),
+                    src.std().item(),
+                )
+                if src.numel() > 1
+                else (0.0, 1.0)
+            )
+            out = torch.normal(
+                mean=mean, std=std, size=dst.shape, dtype=dst.dtype, device=device
+            )
         elif fill_mode == "uniform":
             if src.numel() > 0:
                 lo, hi = src.min().item(), src.max().item()
@@ -102,7 +116,9 @@ def load_state_dict(
             dst.copy_(resized)
 
             if logger:
-                logger.info(f"{name}: shape {tuple(src.shape)} → {tuple(dst.shape)} via '{fill_mode}'.")
+                logger.info(
+                    f"{name}: shape {tuple(src.shape)} → {tuple(dst.shape)} via '{fill_mode}'."
+                )
 
             if strict:
                 shape_mismatch[name] = f"{tuple(src.shape)} → {tuple(dst.shape)}"
@@ -122,9 +138,13 @@ def load_state_dict(
             raise RuntimeError("State dict load failed (strict): " + " | ".join(errors))
     else:
         if missing_keys and logger:
-            logger.warning(f"Missing keys in model state_dict: {', '.join(sorted(missing_keys))}.")
+            logger.warning(
+                f"Missing keys in model state_dict: {', '.join(sorted(missing_keys))}."
+            )
         if unexpected_keys and logger:
-            logger.warning(f"Unexpected keys in state_dict: {', '.join(sorted(unexpected_keys))}.")
+            logger.warning(
+                f"Unexpected keys in state_dict: {', '.join(sorted(unexpected_keys))}."
+            )
 
 
 @HOOKS.register_module()
@@ -189,7 +209,7 @@ class DefaultEvolutionPlugin(BaseEvolutionPlugin):
         last_state_dict = runner.memory.get("state_dict", None)
         if isinstance(last_state_dict, list) and len(last_state_dict) > 0:
             runner.logger.info(
-                f"[DefaultEvolutionPlugin] Multiple snapshots found. Only the last one will be used."
+                "[DefaultEvolutionPlugin] Multiple snapshots found. Only the last one will be used."
             )
             last_state_dict = last_state_dict[-1]
 
@@ -212,7 +232,7 @@ class DefaultEvolutionPlugin(BaseEvolutionPlugin):
                     param.requires_grad = False
         elif self.copy_weights:
             runner.logger.warning(
-                f"[DefaultEvolutionPlugin] No previous state_dict found for weight transfer!"
+                "[DefaultEvolutionPlugin] No previous state_dict found for weight transfer!"
             )
 
     def after_experience(self, runner, experience_index: int):

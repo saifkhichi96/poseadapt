@@ -84,7 +84,6 @@ class BaseEvolutionPlugin(BasePlugin):
             runner (Any): The training runner instance.
             experience_index (int): Index of the current experience.
         """
-        pass
         # if experience_index == 1 and runner._val_loop is not None:
         #     runner._val_loop.run()
 

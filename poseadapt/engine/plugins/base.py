@@ -43,7 +43,6 @@ class BasePlugin(Hook):
             runner (ContinualLearningRunner): The training runner instance.
             experience_index (int): Index of the current experience.
         """
-        pass
 
     def after_experience(self, runner: ContinualLearningRunner, experience_index: int):
         """
@@ -53,7 +52,6 @@ class BasePlugin(Hook):
             runner (ContinualLearningRunner): The training runner instance.
             experience_index (int): Index of the completed experience.
         """
-        pass
 
     def before_backward(
         self,
@@ -71,7 +69,6 @@ class BasePlugin(Hook):
             losses (dict): The computed loss values.
             data_batch (Optional[Union[dict, tuple, list]]): The input data batch.
         """
-        pass
 
     def after_backward(
         self,
@@ -87,4 +84,3 @@ class BasePlugin(Hook):
             batch_idx (int): Index of the current batch.
             data_batch (Optional[Union[dict, tuple, list]]): The input data batch.
         """
-        pass

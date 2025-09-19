@@ -65,15 +65,15 @@ class EWCPlugin(BasePlugin):
     ):
         super().__init__()
         assert alpha >= 0 and alpha <= 1, "Value of `alpha` must be in range 0 and 1"
-        assert (decay_factor is None) or (
-            mode == "online"
-        ), "You need to set `online` mode to use `decay_factor`."
-        assert (decay_factor is not None) or (
-            mode != "online"
-        ), "You need to set `decay_factor` to use the `online` mode."
-        assert (
-            mode == "separate" or mode == "online"
-        ), "Mode must be separate or online."
+        assert (decay_factor is None) or (mode == "online"), (
+            "You need to set `online` mode to use `decay_factor`."
+        )
+        assert (decay_factor is not None) or (mode != "online"), (
+            "You need to set `decay_factor` to use the `online` mode."
+        )
+        assert mode == "separate" or mode == "online", (
+            "Mode must be separate or online."
+        )
 
         self.alpha = alpha
         self.mode = mode

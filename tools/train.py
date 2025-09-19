@@ -121,10 +121,7 @@ def merge_args(cfg, args):
             OptimWrapper,
             "OptimWrapper",
             "OptimWrapper",
-        ), (
-            "`--amp` is not supported custom optimizer wrapper type "
-            f"`{optim_wrapper}."
-        )
+        ), f"`--amp` is not supported custom optimizer wrapper type `{optim_wrapper}."
         cfg.optim_wrapper.type = "OptimWrapper"
         cfg.optim_wrapper.setdefault("loss_scale", "dynamic")
 
