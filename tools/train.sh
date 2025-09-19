@@ -49,12 +49,21 @@ for arg in "${args[@]}"; do
 done
 
 timestamp=$(date +'%Y%m%d_%H%M%S')
-for config in "${configs[@]}"; do
+mkdir -p "work_dirs/$timestamp/logs"
+
+if [[ "${#configs[@]}" -eq 1 ]]; then
+    config="${configs[0]}"
     log_file="work_dirs/$timestamp/logs/$(basename "$config").log"
-    mkdir -p "work_dirs/$timestamp/logs"
-    python -u tools/train.py "$config" --work-dir "$timestamp" "${optional_args[@]}" > "$log_file" 2>&1 &
     log "Training started for $config with optional arguments: ${optional_args[*]}. Logs: $log_file"
-done
-log "Started all training processes. Waiting for them to complete..."
-wait
-log "All training processes completed."
+    python -u tools/train.py "$config" --work-dir "$timestamp" "${optional_args[@]}" > "$log_file" 2>&1
+    log "Training for $config completed."
+else
+    for config in "${configs[@]}"; do
+        log_file="work_dirs/$timestamp/logs/$(basename "$config").log"
+        python -u tools/train.py "$config" --work-dir "$timestamp" "${optional_args[@]}" > "$log_file" 2>&1 &
+        log "Training started for $config with optional arguments: ${optional_args[*]}. Logs: $log_file"
+    done
+    log "Started all training processes. Waiting for them to complete..."
+    wait
+    log "All training processes completed."
+fi
