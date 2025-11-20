@@ -5,14 +5,10 @@ from .standard import (
     EWCPlugin,
     LFLPlugin,
     LWFPlugin,
-    RWalkPlugin,
-    SIPlugin,
 )
 
 __all__ = [
     "EWCPlugin",
     "LFLPlugin",
     "LWFPlugin",
-    "RWalkPlugin",
-    "SIPlugin",
 ]

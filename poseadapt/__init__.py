@@ -8,8 +8,6 @@ from .strategies import (
     EWCPlugin,
     LFLPlugin,
     LWFPlugin,
-    RWalkPlugin,
-    SIPlugin,
 )
 from .third_party.mmpose import (
     MetricWrapper,
@@ -28,7 +26,5 @@ __all__ = [
     "EWCPlugin",
     "LFLPlugin",
     "LWFPlugin",
-    "RWalkPlugin",
-    "SIPlugin",
     "load_evolution_state_dict",
 ]
