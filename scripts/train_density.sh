@@ -53,11 +53,12 @@ log() { echo "$(date +'%Y-%m-%d %H:%M:%S') [INFO] $*"; }
 
 # === Experiment selection ===
 case "${1:-all}" in
-    g)   SELECTED=("${DENSITY_O5[@]}") ;;
-    d)  SELECTED=("${DENSITY_O10[@]}") ;;
+    o5)   SELECTED=("${DENSITY_O5[@]}") ;;
+    o10)  SELECTED=("${DENSITY_O10[@]}") ;;
+    o20)  SELECTED=("${DENSITY_O20[@]}") ;;
     ms)   SELECTED=("${MODE_MS[@]}") ;;
-    all)  SELECTED=("${DENSITY_O5[@]}" "${DENSITY_O10[@]}" "${MODE_MS[@]}") ;;
-    *) echo "Usage: $0 [g|d|ms|all]"; exit 1 ;;
+    all)  SELECTED=("${DENSITY_O5[@]}" "${DENSITY_O10[@]}" "${DENSITY_O20[@]}" "${MODE_MS[@]}") ;;
+    *) echo "Usage: $0 [o5|o10|o20|ms|all]"; exit 1 ;;
 esac
 
 # === Run training ===

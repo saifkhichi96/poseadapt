@@ -11,7 +11,7 @@ randomness = dict(seed=21)
 max_epochs = 10
 train_cfg = dict(
     type="ContinualTrainingLoop",
-    max_epochs_per_experience=[0, max_epochs, max_epochs],
+    max_epochs_per_experience=[0, max_epochs, max_epochs, max_epochs],
     val_interval=2,
 )
 
